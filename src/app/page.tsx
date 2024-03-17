@@ -10,6 +10,7 @@ import { requestJetComparison } from '@/services/compare-service';
 
 import AvailableJetsTable from '@/components/AvailableJetsTable/AvailableJetsTable';
 import JetComparisonControls from '@/components/JetComparisonControls/JetComparisonControls';
+import JetComparisonResultsTable from '@/components/JetComparisonResultsTable/JetComparisonResultsTable';
 
 const CharterJetComparison = () => {
   const [jets, setJets] = useState<Jet[]>([]);
@@ -19,7 +20,7 @@ const CharterJetComparison = () => {
   const [loadingComparison, setLoadingComparison] = useState<boolean>(false);
   const [showComparisonResultsTable, setShowComparisonResultsTable] = useState<boolean>(false);
   const [comparisonResults, setComparisonResults] = useState<Comparison[]>([])
-  
+
   const [error, setError] = useState<String>("");
 
   useEffect(
@@ -81,13 +82,17 @@ const CharterJetComparison = () => {
           setSelectedJets={setSelectedJets}>
         </AvailableJetsTable>}
 
-        <JetComparisonControls
+      <JetComparisonControls
         selectedJets={selectedJets}
         setLoadingComparison={setLoadingComparison}
         initiateJetComparison={initiateJetComparison}
         criterium={criterium}
         setCriterium={setCriterium}>
       </JetComparisonControls>
+
+      {showComparisonResultsTable &&
+        <JetComparisonResultsTable comparisonResults={comparisonResults}>
+        </JetComparisonResultsTable>}
     </div>
   );
 };
