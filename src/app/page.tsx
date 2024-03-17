@@ -1,13 +1,13 @@
 'use client';
 import { use, useEffect, useState } from 'react';
-
 import Jet from '@/interfaces/Jet';
 import { requestJets } from '@/services/jet-service';
-
+import AvailableJetsTable from '@/components/AvailableJetsTable/AvailableJetsTable';
 
 const CharterJetComparison = () => {
   const [jets, setJets] = useState<Jet[]>([]);
   const [loadingAvailableJets, setLoadingAvailableJets] = useState<boolean>(true);
+  const [selectedJets, setSelectedJets] = useState<number[]>([]);
   const [error, setError] = useState<String>("");
 
   useEffect(
@@ -37,7 +37,11 @@ const CharterJetComparison = () => {
   return (
     <div id="charter-jet-container">
       <h1>Top 10 Charter Jets</h1>
-
+      {!loadingAvailableJets &&
+        <AvailableJetsTable
+          jets={jets}
+          setSelectedJets={setSelectedJets}>
+        </AvailableJetsTable>}
     </div>
   );
 };
