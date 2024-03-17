@@ -4,7 +4,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Jet from '../../src/interfaces/Jet'
 
 async function performJetComparison(jets: Jet[], criterium: string = "top speed") {
-    // console.log(criterium)
     try {
         const comparisonCompletion = await openai.chat.completions.create({
             messages: [
@@ -18,14 +17,11 @@ async function performJetComparison(jets: Jet[], criterium: string = "top speed"
             ],
             model: "gpt-4-0125-preview"
         });
-        //   console.log(comparisonCompletion.choices[0].message.content);
         if(!comparisonCompletion){
             throw new Error("OpenAI failed to give a completion.");
         }
         const comparisonText = comparisonCompletion.choices[0].message.content.replace(/```/g, '').replace(/\n/g, '').replace(/json/g, "").replace(/\\/g, "");
-        //   console.log(comparisonText);
         const comparisonJson = JSON.parse(comparisonText);
-        //   console.log(comparisonJson);
         return comparisonJson;
     } catch (error) {
         console.error("Failed to perform jet comparison:", error);
