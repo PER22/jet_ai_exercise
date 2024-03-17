@@ -3,7 +3,8 @@ import openai from '../../src/utilities/OpenAiInstance'
 import { NextApiRequest, NextApiResponse } from 'next';
 import Jet from '../../src/interfaces/Jet'
 
-async function performJetComparison(jets: Jet[], criterium: string = "top speed") {
+async function performJetComparison(jets: Jet[], criterium: string = "top speed (Mach)") {
+    console.log("performJetComparison: jets: ", jets);
     try {
         const comparisonCompletion = await openai.chat.completions.create({
             messages: [
