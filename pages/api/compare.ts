@@ -13,7 +13,7 @@ async function performJetComparison(jets: Jet[], criterium: string = "top speed 
                     content: `Produce a json object that ranks and assigns a value to these jets: 
                 ${jets.map((jet, index) => jet.name + ` (Wingspan: ${jet.wingspan}. Number of engines: ${jet.engines}. Manufacture year: ${jet.year})` + '.\n').join(" ")} 
                 Rank  (based on ${criterium} and your judgement) each jet, and provide the value of the ${criterium} in the value property. 
-                strictly in this format:[{"name", name, "value": value, "rank": rank}, ...]. Do not write any plaintext, only json.`
+                strictly in this format:[{"name", name, "value": value, "rank": rank}, ...]. Do not write any plaintext, only json. If applicable, use units for the value. prefer imperial.`
                 }
             ],
             model: "gpt-4-0125-preview"

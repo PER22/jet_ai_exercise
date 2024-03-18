@@ -1,33 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-primary: 33, 37, 41;
+  --color-secondary: 108, 117, 125;
+  --color-background: 248, 249, 250;
+  --color-accent: 13, 110, 253;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --color-primary: 255, 255, 255;
+    --color-secondary: 134, 142, 150;
+    --color-background: 33, 37, 41;
+    --color-accent: 13, 102, 208;
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: rgb(var(--color-primary));
+  background-color: rgb(var(--color-background));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+#charter-jet-container {
+  margin: 0 auto;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem;
+  min-height: 80vh;
+}
+
+.table-jets {
+  border: 1px solid black;
+}
+
+td,
+th {
+  min-width: 5rem;
+  border: 1px solid black;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+th {
+  background-color: #aaa;
+}
+
+
+#comparison-controls {
+  margin-top: 5rem;
+}
+
+
+
+#comparison-results {
+  margin-top: 5rem;
+}
+
+
+
+button,
+[type="checkbox"],
+[type="radio"] {
+  @apply cursor-pointer;
+}
+
+#compare-btn {
+  margin: 0 auto;
+  background-color: #5b1d1d;
+  background-color: var(--color-accent);
 }
