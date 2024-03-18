@@ -16,13 +16,15 @@ const CharterJetComparison = () => {
   const [jets, setJets] = useState<Jet[]>([]);
   const [loadingAvailableJets, setLoadingAvailableJets] = useState<boolean>(true);
   const [selectedJets, setSelectedJets] = useState<number[]>([]);
-  const [criterium, setCriterium] = useState<string>("fuel efficiency");
+  const [criterium, setCriterium] = useState<string>("top speed (Mach)");
   const [loadingComparison, setLoadingComparison] = useState<boolean>(false);
   const [showComparisonResultsTable, setShowComparisonResultsTable] = useState<boolean>(false);
   const [comparisonResults, setComparisonResults] = useState<Comparison[]>([])
 
   const [error, setError] = useState<String>("");
 
+
+  //Get the list of jets from database upon page load.
   useEffect(
     () => {
       async function fetchJetList() {
@@ -44,6 +46,7 @@ const CharterJetComparison = () => {
     }
     , []);
 
+    //Send request to comparison endpoint with the selected jets and criterium.
   const initiateJetComparison = async () => {
     if (selectedJets.length === 0) {
       setError('Please select at least one jet to compare.');
@@ -71,7 +74,6 @@ const CharterJetComparison = () => {
     }
   };
 
-  useEffect(() => console.log(comparisonResults), [comparisonResults]);
 
   return (
     <div id="charter-jet-container">
@@ -89,6 +91,7 @@ const CharterJetComparison = () => {
         criterium={criterium}
         setCriterium={setCriterium}>
       </JetComparisonControls>
+      {error && <h3>{error}</h3>}
 
       {showComparisonResultsTable &&
         <JetComparisonResultsTable comparisonResults={comparisonResults}>
