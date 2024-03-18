@@ -55,10 +55,7 @@ async function getJetsFromDatabaseByIds(jetIds: number[]): Promise<Jet[] | {erro
                 },
             },
         });
-        return jets.map(jet => ({
-            ...jet,
-            name: jet.name ?? '',
-        }));
+        return jets || [];
     } catch (err: unknown) {
         return (err instanceof Error) ? { error: err.message } : [];
     }
