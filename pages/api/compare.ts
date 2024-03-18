@@ -47,6 +47,7 @@ async function performJetComparison(jets: Jet[], criterium: string) {
 
 async function getJetsFromDatabaseByIds(jetIds: number[]): Promise<Jet[] | {error: string}> {
     try {
+        //Request Jets by multiple IDs from Jet table via Prisma
         const jets = await prisma.jet.findMany({
             where: {
                 id: {
@@ -59,18 +60,17 @@ async function getJetsFromDatabaseByIds(jetIds: number[]): Promise<Jet[] | {erro
             name: jet.name ?? '',
         }));
     } catch (err: unknown) {
-        if (err instanceof Error) {
-            return { error: err.message };
-        } else {
-            throw err;
-        }
+        return (err instanceof Error) ? { error: err.message } : [];
     }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const { jet: queriedJets, criterium } = req.query;
+        //Get and confirm structure of query parameters:
+        const { jet: queriedJets, criterium } = req.query; 
         let jetIds = Array.isArray(queriedJets) ? queriedJets.map(Number).filter(Number.isFinite) : [];
+
+        //Get requested jets from DB and handle errors:
         let jetsFromDatabase = await getJetsFromDatabaseByIds(jetIds);
         if ('error' in jetsFromDatabase) {
             return res.status(400).json({ error: jetsFromDatabase.error });
@@ -78,10 +78,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (jetsFromDatabase.length < 2) {
             return res.status(400).json({ error: '2 or more selected jets are required for comparison' });
         }
+
+        //Use ChatGPT API, sort resulting JSON, and return it:
         const comparisonResult = await performJetComparison(jetsFromDatabase, Array.isArray(criterium) ? criterium[0]: criterium ?? '');
         comparisonResult.sort((a: Comparison, b: Comparison) => a.rank - b.rank);
         return res.status(200).json(comparisonResult);
     } else {
+        //Only GET requests allowed to this endpoint.
         res.setHeader('Allow', ['GET']);
         console.log(`Error: Method ${req.method} Not Allowed`);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
