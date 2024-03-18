@@ -3,34 +3,49 @@ import prisma from '../../src/utilities/PrismaClientInstance'
 import openai from '../../src/utilities/OpenAiInstance'
 import { NextApiRequest, NextApiResponse } from 'next';
 import Jet from '../../src/interfaces/Jet'
+import Comparison from '@/interfaces/Comparison';
 
-async function performJetComparison(jets: Jet[], criterium: string = "top speed (Mach)") {
+function buildPrompt(jets: Jet[], criterium: string): string {
+    return (
+        `Produce a json object that ranks and assigns a value to these jets: 
+        ${jets.map((jet, index) => jet.name + ` (Wingspan: ${jet.wingspan}. Number of engines: ${jet.engines}. 
+            Manufacture year: ${jet.year})` + '.\n').join(" ")}Rank(based on ${criterium} and your judgement) 
+            each jet, and provide the value of the ${criterium} in the value property.strictly in this format: 
+            [{ "name", name, "value": value, "rank": rank }, ...]. Do not write any plaintext, only json.If 
+            applicable, use units for the value.prefer imperial.`);
+}
+
+async function performJetComparison(jets: Jet[], criterium: string) {
     try {
+        //Ask chatGPT to compare:
         const comparisonCompletion = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: `Produce a json object that ranks and assigns a value to these jets: 
-                        ${jets.map((jet, index) => jet.name + ` (Wingspan: ${jet.wingspan}. Number of engines: ${jet.engines}. Manufacture year: ${jet.year})` + '.\n').join(" ")} 
-                        Rank  (based on ${criterium} and your judgement) each jet, and provide the value of the ${criterium} in the value property. 
-                        strictly in this format:[{"name", name, "value": value, "rank": rank}, ...]. Do not write any plaintext, only json. If applicable, use units for the value. prefer imperial.`
+                    content: buildPrompt(jets, criterium)
                 }
             ],
             model: "gpt-4-0125-preview"
         });
-        if(!comparisonCompletion){
+        
+        //Confirm the response's structure
+        if(!(comparisonCompletion?.choices[0]?.message?.content)){
             throw new Error("OpenAI failed to give a completion.");
         }
-        const comparisonText = comparisonCompletion.choices[0].message.content.replace(/```/g, '').replace(/\n/g, '').replace(/json/g, "").replace(/\\/g, "");
-        const comparisonJson = JSON.parse(comparisonText);
-        return comparisonJson;
+        
+        //Clean up ChatGPT's response:
+        const comparisonText = comparisonCompletion?.choices[0]?.message?.content.replace(/```/g, '').replace(/\n/g, '').replace(/json/g, "").replace(/\\/g, "");
+        
+        //Turn it into JSON and return it:
+        return JSON.parse(comparisonText) || [];
+        
     } catch (error) {
         console.error("Failed to perform jet comparison:", error);
         throw new Error("Error performing jet comparison.");
     }
 }
 
-async function getJetsFromDatabaseByIds(jetIds: number[]) {
+async function getJetsFromDatabaseByIds(jetIds: number[]): Promise<Jet[] | {error: string}> {
     try {
         const jets = await prisma.jet.findMany({
             where: {
@@ -39,8 +54,17 @@ async function getJetsFromDatabaseByIds(jetIds: number[]) {
                 },
             },
         });
-        return jets;
-    } catch (err) { return { error: err.message }; }
+        return jets.map(jet => ({
+            ...jet,
+            name: jet.name ?? '',
+        }));
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return { error: err.message };
+        } else {
+            throw err;
+        }
+    }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -48,14 +72,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { jet: queriedJets, criterium } = req.query;
         let jetIds = Array.isArray(queriedJets) ? queriedJets.map(Number).filter(Number.isFinite) : [];
         let jetsFromDatabase = await getJetsFromDatabaseByIds(jetIds);
-        if (jetsFromDatabase.error) { 
-            return res.status(400).json({ error: error });
+        if ('error' in jetsFromDatabase) {
+            return res.status(400).json({ error: jetsFromDatabase.error });
         }
         if (jetsFromDatabase.length < 2) {
             return res.status(400).json({ error: '2 or more selected jets are required for comparison' });
         }
-        const comparisonResult = await performJetComparison(jetsFromDatabase, criterium);
-        comparisonResult.sort((a, b) => a.rank - b.rank);
+        const comparisonResult = await performJetComparison(jetsFromDatabase, Array.isArray(criterium) ? criterium[0]: criterium ?? '');
+        comparisonResult.sort((a: Comparison, b: Comparison) => a.rank - b.rank);
         return res.status(200).json(comparisonResult);
     } else {
         res.setHeader('Allow', ['GET']);
