@@ -1,4 +1,4 @@
-export default async function sendRequest(url, method = 'GET', payload=null, headers = {}){
+export default async function sendRequest(url: string, method = 'GET', payload=null, headers = {}){
     const options = { method, headers };
     const res = await fetch(url, options);
     
