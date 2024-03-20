@@ -27,7 +27,7 @@ const AvailableJetsTable: React.FC<AvailableJetsTableProps> = ({ jets, setSelect
         });
     };
 
-    const toggleCheckbox = (e: React.MouseEvent<HTMLTableCellElement, MouseEvent>, jetId: number) => {
+    const toggleCheckbox = (e: React.MouseEvent<HTMLTableRowElement>, jetId: number) => {
         if (e.target === document.getElementById(`checkbox-${jetId}`)) {
             return;
         }
