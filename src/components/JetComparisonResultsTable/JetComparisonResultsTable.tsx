@@ -4,7 +4,7 @@ import Comparison from '@/interfaces/Comparison';
 const JetComparisonResultsTable = ({ comparisonResults }: { comparisonResults: Comparison[] }) => {
   return (
     <div id="comparison-results">
-      <h2>Comparison Results</h2>
+      <h1>Comparison Results</h1>
       <table id="results-table">
         <thead>
           <tr>

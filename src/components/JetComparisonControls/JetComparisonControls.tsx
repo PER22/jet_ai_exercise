@@ -15,32 +15,37 @@ const JetComparisonControls: React.FC<JetComparisonControlsProps> = ({ selectedJ
         }
     };
 
-    return (
-        <div id="comparison-controls">
-            <label>
-                Compare selected jets by:
-            </label>
-            <div id="comparison-options" onChange={e => {
-                const target = e.target as HTMLInputElement;
-                setCriterium(target.value)
-            }}>
+    return (<>
+
+        <div id="comparison-controls-container">
+            <h1>Compare</h1>
+            <div id="comparison-controls">
                 <label>
-                    <input type="radio" name="comparison" value="top speed (Mach)" defaultChecked />
-                    Top Speed
+                    Compare selected jets by:
                 </label>
-                <br/>
-                <label>
-                    <input type="radio" name="comparison" value="fuel efficiency" />
-                    Fuel Efficiency
-                </label>
-                <br/>
-                <label>
-                    <input type="radio" name="comparison" value="standard number of seats" />
-                    Maximum Seats
-                </label>
+                <div id="comparison-options" onChange={e => {
+                    const target = e.target as HTMLInputElement;
+                    setCriterium(target.value)
+                }}>
+                    <label>
+                        <input type="radio" name="comparison" value="top speed (Mach)" defaultChecked />
+                        Top Speed
+                    </label>
+                    <br />
+                    <label>
+                        <input type="radio" name="comparison" value="fuel efficiency" />
+                        Fuel Efficiency
+                    </label>
+                    <br />
+                    <label>
+                        <input type="radio" name="comparison" value="standard number of seats" />
+                        Maximum Seats
+                    </label>
+                </div>
+                <button id="compare-btn" onClick={handleCompareButtonClick}>Compare</button>
             </div>
-            <button id="compare-btn" onClick={handleCompareButtonClick}>Compare</button>
         </div>
+    </>
     );
 };
 export default JetComparisonControls;
