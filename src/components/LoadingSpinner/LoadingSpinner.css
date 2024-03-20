@@ -1,0 +1,22 @@
+#loading-spinner {
+    height: 3rem;
+    width: 3rem;
+    border: .3rem solid black;
+    border-color: black transparent black transparent;
+    border-radius: 50%;
+    animation: spin .5s ease-in-out infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+    #loading-spinner {
+        border-color: white transparent white transparent;
+    }
+}
+
+@keyframes spin {
+    from{
+        rotate: 0deg;
+    } 
+    to {rotate: 180deg;}
+}
+

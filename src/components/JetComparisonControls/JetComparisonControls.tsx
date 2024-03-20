@@ -28,16 +28,18 @@ const JetComparisonControls: React.FC<JetComparisonControlsProps> = ({ selectedJ
                     <input type="radio" name="comparison" value="top speed (Mach)" defaultChecked />
                     Top Speed
                 </label>
+                <br/>
                 <label>
                     <input type="radio" name="comparison" value="fuel efficiency" />
                     Fuel Efficiency
                 </label>
+                <br/>
                 <label>
                     <input type="radio" name="comparison" value="standard number of seats" />
                     Maximum Seats
                 </label>
             </div>
-            <button id="compare-btn" onClick={handleCompareButtonClick}>Compare Selected Jets</button>
+            <button id="compare-btn" onClick={handleCompareButtonClick}>Compare</button>
         </div>
     );
 };

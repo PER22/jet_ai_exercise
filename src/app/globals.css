@@ -1,60 +1,90 @@
-:root {
-  --color-primary: 33, 37, 41;
-  --color-secondary: 108, 117, 125;
-  --color-background: 248, 249, 250;
-  --color-accent: 13, 110, 253;
+body {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  height: 100;
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: 255, 255, 255;
-    --color-secondary: 134, 142, 150;
-    --color-background: 33, 37, 41;
-    --color-accent: 13, 102, 208;
+
+body::before {
+  content: "";
+  position: absolute;
+  top: -55%;
+  right: -55%;
+  bottom: -55%;
+  left: -55%;
+  background: linear-gradient(45deg, magenta, cyan);
+  z-index: -1;
+  animation: rotateGradientSmooth 4s linear infinite;
+}
+
+@keyframes rotateGradientSmooth {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 
-body {
-  color: rgb(var(--color-primary));
-  background-color: rgb(var(--color-background));
+@media (prefers-color-scheme: dark) {
+  body::before {
+    background: linear-gradient(45deg, darkmagenta, darkcyan);
+  }
 }
+
+
 
 #charter-jet-container {
   margin: 0 auto;
-  width: 60%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5rem;
-  min-height: 80vh;
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "jets-table comparison-controls"
+    "jets-table comparison-results";
+
 }
 
-.table-jets {
-  border: 1px solid black;
+#jets-table {
+  padding-top: 0rem;
+  padding-bottom: 1.5rem;
+  border-radius: 1rem;
+  color: white;
+  background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .5));
 }
 
 td,
 th {
   min-width: 5rem;
-  border: 1px solid black;
   padding-left: 1rem;
   padding-right: 1rem;
+  text-align: center;
 }
 
-th {
-  background-color: #aaa;
-}
-
-
-#comparison-controls {
-  margin-top: 5rem;
+td {
+  padding-top: .55rem;
+  padding-bottom: .55rem;
 }
 
 
-
-#comparison-results {
-  margin-top: 5rem;
+h1 {
+  text-align: center;
+  width: 100%;
+  margin-top: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 1rem 1rem 0rem 0rem;
+  background: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .5));
 }
+
+
 
 
 
@@ -65,7 +95,28 @@ button,
 }
 
 #compare-btn {
-  margin: 0 auto;
-  background-color: #5b1d1d;
-  background-color: var(--color-accent);
+  padding: 1rem;
+  font-size: larger;
+  border: 0px;
+  background: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .9));
+  color: white;
+  margin: 1rem;
+  border-radius: 1rem;
+}
+
+#jets-table {
+  grid-area: jets-table;
+}
+
+#comparison-controls {
+  grid-area: comparison-controls;
+  background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .5));
+  padding: 1rem;
+  margin-left: 1rem;
+  border-radius: 1rem;
+}
+
+#comparison-results {
+  grid-area: comparison-results;
+  text-align: center;
 }

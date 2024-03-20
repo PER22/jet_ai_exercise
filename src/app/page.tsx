@@ -11,6 +11,7 @@ import { requestJetComparison } from '@/services/compare-service';
 import AvailableJetsTable from '@/components/AvailableJetsTable/AvailableJetsTable';
 import JetComparisonControls from '@/components/JetComparisonControls/JetComparisonControls';
 import JetComparisonResultsTable from '@/components/JetComparisonResultsTable/JetComparisonResultsTable';
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 
 const CharterJetComparison = () => {
   const [jets, setJets] = useState<Jet[]>([]);
@@ -74,10 +75,12 @@ const CharterJetComparison = () => {
     }
   };
 
+  useEffect(()=>console.log(selectedJets),[selectedJets])
 
   return (
     <div id="charter-jet-container">
-      <h1>Top 10 Charter Jets</h1>
+      
+      {loadingAvailableJets && <LoadingSpinner/>}
       {!loadingAvailableJets &&
         <AvailableJetsTable
           jets={jets}
@@ -92,8 +95,9 @@ const CharterJetComparison = () => {
         setCriterium={setCriterium}>
       </JetComparisonControls>
       {error && <h3>{error}</h3>}
-
-      {showComparisonResultsTable &&
+      
+      {loadingComparison && <LoadingSpinner/>}
+      {!loadingComparison && showComparisonResultsTable &&
         <JetComparisonResultsTable comparisonResults={comparisonResults}>
         </JetComparisonResultsTable>}
     </div>
