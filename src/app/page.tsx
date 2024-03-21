@@ -84,8 +84,11 @@ const CharterJetComparison = () => {
       {!loadingAvailableJets &&
         <AvailableJetsTable
           jets={jets}
-          setSelectedJets={setSelectedJets}>
-        </AvailableJetsTable>}
+          setJets={setJets}
+          setSelectedJets={setSelectedJets}
+          loadingAvailableJets={loadingAvailableJets}
+        />
+      }
 
       <JetComparisonControls
         selectedJets={selectedJets}

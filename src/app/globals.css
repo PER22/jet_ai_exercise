@@ -46,7 +46,6 @@ body::before {
   grid-template-columns: 2fr 1fr 2fr;
   grid-template-areas:
     "jets-table comparison-controls comparison-results";
-
 }
 
   table {
@@ -81,10 +80,6 @@ h1 {
   border-radius: 1rem 1rem 0rem 0rem;
   background: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .5));
 }
-
-
-
-
 
 button,
 [type="checkbox"],

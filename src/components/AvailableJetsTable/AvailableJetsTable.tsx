@@ -1,41 +1,26 @@
 import React, { useState } from 'react';
 import Jet from '@/interfaces/Jet';
+import AvailableJetsTableRow from './AvailableJetsTableRow/AvailableJetsTableRow';
 
 interface AvailableJetsTableProps {
     jets: Jet[];
+    setJets: React.Dispatch<React.SetStateAction<Jet[]>>;
     setSelectedJets: React.Dispatch<React.SetStateAction<number[]>>;
+    loadingAvailableJets: boolean;
 }
 
-const AvailableJetsTable: React.FC<AvailableJetsTableProps> = ({ jets, setSelectedJets }) => {
+const AvailableJetsTable: React.FC<AvailableJetsTableProps> = ({ jets, setJets, setSelectedJets, loadingAvailableJets }) => {
     const [hoveredJetId, setHoveredJetId] = useState<number | null>(null);
+    const [currentlySortedBy, setCurrentlySortedBy] = useState<string | null>(null);
+    
 
-    const handleMouseEnter = (jetId: number) => {
-        setHoveredJetId(jetId);
-    };
-
-    const handleMouseLeave = () => {
-        setHoveredJetId(null);
-    };
-
-    const handleCheckboxChange = (jetId: number, isChecked: boolean) => {
-        setSelectedJets(prevSelectedJets => {
-            if (isChecked) {
-                return prevSelectedJets.includes(jetId) ? prevSelectedJets : [...prevSelectedJets, jetId];
-            } else {
-                return prevSelectedJets.filter(id => id !== jetId);
-            }
-        });
-    };
-
-    const toggleCheckbox = (e: React.MouseEvent<HTMLTableRowElement>, jetId: number) => {
-        if (e.target === document.getElementById(`checkbox-${jetId}`)) {
-            return;
+    const sortJetsByColumn = (columnName: keyof Jet, currentlySortedBy: string | null) => {
+        if(columnName === currentlySortedBy){
+            setJets(jets=>[...jets].reverse());
         }
-
-        const checkbox = document.getElementById(`checkbox-${jetId}`) as HTMLInputElement;
-        if (checkbox) {
-            checkbox.checked = !checkbox.checked;
-            handleCheckboxChange(jetId, checkbox.checked);
+        else{
+            setJets(unsortedJets => [...unsortedJets].sort((jetA: Jet, jetB: Jet)=> Number(jetA[columnName]) - Number(jetB[columnName]) ) );
+            setCurrentlySortedBy(old => columnName);
         }
     };
 
@@ -46,34 +31,20 @@ const AvailableJetsTable: React.FC<AvailableJetsTableProps> = ({ jets, setSelect
                 <thead>
                     <tr>
                         <th>Select</th>
-                        <th>Name</th>
-                        <th>Wingspan (ft)</th>
-                        <th>Engines</th>
-                        <th>Manufactured</th>
+                        <th onClick={() => console.log('name')}>Name</th>
+                        <th onClick={()=>sortJetsByColumn("wingspan", currentlySortedBy)} >Wingspan (ft)</th>
+                        <th onClick={()=>sortJetsByColumn("engines", currentlySortedBy)} >Engines</th>
+                        <th onClick={()=>sortJetsByColumn("year", currentlySortedBy)} >Manufactured</th>
                     </tr>
                 </thead>
                 <tbody id="jet-table-body">
                     {jets && jets.map(jet => (
-                        <tr 
-                            key={jet.id} 
-                            onClick={(e) => toggleCheckbox(e, jet.id)}
-                            onMouseEnter={() => handleMouseEnter(jet.id)}
-                            onMouseLeave={handleMouseLeave}
-                            style={{ backgroundColor: hoveredJetId === jet.id ? '#f2f2f270' : 'transparent' }}
-                        >
-                            <td>
-                                <input 
-                                    type="checkbox" 
-                                    name={`checkbox-${jet.id}`} 
-                                    id={`checkbox-${jet.id}`} 
-                                    onChange={(e) => handleCheckboxChange(jet.id, e.target.checked)} 
-                                />
-                            </td>
-                            <td>{jet.name}</td>
-                            <td>{jet.wingspan}</td>
-                            <td>{jet.engines}</td>
-                            <td>{jet.year}</td>
-                        </tr>
+                        <AvailableJetsTableRow
+                            jet={jet}
+                            hoveredJetId={hoveredJetId}
+                            setHoveredJetId={setHoveredJetId}
+                            setSelectedJets={setSelectedJets}
+                        />
                     ))}
                 </tbody>
             </table>
